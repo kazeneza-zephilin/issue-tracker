@@ -1,11 +1,14 @@
 "use client";
 
-import { Button, Callout, TextField } from "@radix-ui/themes";
+import { Button, Callout, Text, TextField } from "@radix-ui/themes";
 import { useForm, Controller } from "react-hook-form";
 import axios from "axios";
 import dynamic from "next/dynamic";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { CreateIssueSchema } from "../../validationSchema";
+import { z } from "zod";
 
 const SimpleMDEClient = dynamic(() => import("./SimpleMDEClient"), {
     ssr: false,
@@ -13,11 +16,10 @@ const SimpleMDEClient = dynamic(() => import("./SimpleMDEClient"), {
 
 const newIssuePage = () => {
     const router = useRouter();
-    interface issueForm {
-        title: string;
-        description: string;
-    }
-    const { register, control, handleSubmit } = useForm<issueForm>();
+    type IssueForm = z.infer<typeof CreateIssueSchema>;
+    const { register, control, handleSubmit, formState : {errors} } = useForm<IssueForm>({
+        resolver: zodResolver(CreateIssueSchema),
+    });
     const [error, setError] = useState<string | null>(null);
     return (
         <div className="max-w-2xl">
@@ -43,11 +45,13 @@ const newIssuePage = () => {
                 >
                     <TextField.Slot />
                 </TextField.Root>
+                {errors.title &&  <Text color="red" as="p">{errors.title.message}</Text>}
                 <Controller
                     name="description"
                     control={control}
                     render={({ field }) => <SimpleMDEClient field={field} />}
                 />
+                {errors.description && <Text color="red" as="p">{errors.description.message}</Text> }
                 <Button>Submit</Button>
             </form>
         </div>
