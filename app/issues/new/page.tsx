@@ -9,6 +9,7 @@ import { useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { CreateIssueSchema } from "../../validationSchema";
 import { z } from "zod";
+import ErrorMessage from "../../components/ErrorMessage";
 
 const SimpleMDEClient = dynamic(() => import("./SimpleMDEClient"), {
     ssr: false,
@@ -17,7 +18,12 @@ const SimpleMDEClient = dynamic(() => import("./SimpleMDEClient"), {
 const newIssuePage = () => {
     const router = useRouter();
     type IssueForm = z.infer<typeof CreateIssueSchema>;
-    const { register, control, handleSubmit, formState : {errors} } = useForm<IssueForm>({
+    const {
+        register,
+        control,
+        handleSubmit,
+        formState: { errors },
+    } = useForm<IssueForm>({
         resolver: zodResolver(CreateIssueSchema),
     });
     const [error, setError] = useState<string | null>(null);
@@ -45,13 +51,13 @@ const newIssuePage = () => {
                 >
                     <TextField.Slot />
                 </TextField.Root>
-                {errors.title &&  <Text color="red" as="p">{errors.title.message}</Text>}
+                <ErrorMessage>{errors.title?.message}</ErrorMessage>
                 <Controller
                     name="description"
                     control={control}
                     render={({ field }) => <SimpleMDEClient field={field} />}
                 />
-                {errors.description && <Text color="red" as="p">{errors.description.message}</Text> }
+                <ErrorMessage>{errors.description?.message}</ErrorMessage>
                 <Button>Submit</Button>
             </form>
         </div>
