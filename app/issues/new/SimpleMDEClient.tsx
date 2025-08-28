@@ -6,9 +6,10 @@ import { useState } from "react";
 const SimpleMDE = dynamic(() => import("react-simplemde-editor"), { ssr: false });
 import "easymde/dist/easymde.min.css";
 
-export default function SimpleMDEClient() {
-  const [value, setValue] = useState("");
+export default function SimpleMDEClient({ field }: { field: any }) {
+//   const [value, setValue] = useState("");
   return (
-    <SimpleMDE value={value} onChange={setValue} placeholder="add description" />
+    <SimpleMDE value={field.value}
+     onChange={(value) => field.onChange(value)} placeholder="add description" />
   );
 }
