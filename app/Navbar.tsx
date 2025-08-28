@@ -12,7 +12,7 @@ const Navbar = () => {
     ];
     const currentPath = usePathname();
     return (
-        <nav className="flex items-center  h-16 mb-2 border-b border-orange-400 p-4 space-x-6">
+        <nav className="flex items-center  h-16 mb-2 border-b border-orange-200 p-4 space-x-6">
             <AiFillBug color="orange" size={30} />
             <ul className="flex space-x-6">
                 {Links.map((link) => (
