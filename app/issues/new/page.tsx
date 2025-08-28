@@ -1,5 +1,9 @@
-import React from "react";
-import { TextArea, TextField } from "@radix-ui/themes";
+"use client";
+
+import { Button, TextField } from "@radix-ui/themes";
+
+import dynamic from "next/dynamic";
+const SimpleMDEClient = dynamic(() => import("./SimpleMDEClient"), { ssr: false });
 
 const newIssuePage = () => {
     return (
@@ -7,7 +11,8 @@ const newIssuePage = () => {
             <TextField.Root placeholder="Issue Title">
                 <TextField.Slot />
             </TextField.Root>
-            <TextArea placeholder="add description" />
+            <SimpleMDEClient />
+            <Button>Submit</Button>
         </div>
     );
 };
