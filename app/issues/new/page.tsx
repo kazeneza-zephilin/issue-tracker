@@ -8,14 +8,15 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { CreateIssueSchema } from "../../validationSchema";
-import { z } from "zod";
+import { set, z } from "zod";
 import ErrorMessage from "../../components/ErrorMessage";
+import Spinner from "../../components/Spinner";
 
 const SimpleMDEClient = dynamic(() => import("./SimpleMDEClient"), {
     ssr: false,
 });
 
-const newIssuePage = () => {
+const NewIssuePage = () => {
     const router = useRouter();
     type IssueForm = z.infer<typeof CreateIssueSchema>;
     const {
@@ -27,6 +28,7 @@ const newIssuePage = () => {
         resolver: zodResolver(CreateIssueSchema),
     });
     const [error, setError] = useState<string | null>(null);
+    const [isSubmiting, setIsSubmiting] = useState(false);
     return (
         <div className="max-w-2xl">
             {error && (
@@ -38,9 +40,11 @@ const newIssuePage = () => {
                 className="space-y-4"
                 onSubmit={handleSubmit(async (data) => {
                     try {
+                        setIsSubmiting(true);
                         await axios.post("/api/issues", data);
                         router.push("/issues");
                     } catch (error) {
+                        setIsSubmiting(false);
                         setError("Something went wrong");
                     }
                 })}
@@ -58,10 +62,13 @@ const newIssuePage = () => {
                     render={({ field }) => <SimpleMDEClient field={field} />}
                 />
                 <ErrorMessage>{errors.description?.message}</ErrorMessage>
-                <Button>Submit</Button>
+                <Button disabled={isSubmiting}>
+                    {isSubmiting && <Spinner />}
+                    Submit
+                </Button>
             </form>
         </div>
     );
 };
 
-export default newIssuePage;
+export default NewIssuePage;
